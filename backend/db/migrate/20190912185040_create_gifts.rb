@@ -1,4 +1,4 @@
-class CreateGifts < ActiveRecord::Migration[6.1]
+class CreateGifts < ActiveRecord::Migration[5.2]
   def change
     create_table :gifts do |t|
       t.string :title

@@ -4,14 +4,14 @@
 
 .card {
   text-align: left;
-  border: #778899 solid 0.5px;
+  border: #778899 solid 1px;
   border-radius: 25px;
   padding: 1rem;
   width: 18rem;
   height: 27rem;
   display: inline-grid;
   margin: 1rem 1rem;
-  /* box-shadow: 1px 2px #00CED1 */
+  box-shadow: 1px 2px  #54a115 
 }
 
 button {
@@ -33,15 +33,15 @@ button {
 }
 
 .gift-cat {
-    color: #008080;
+    color:  #000000;
 }
 
 .subheader {
-    color: #008080;
+    color:  #54a115;
 }
 
 header {
-    background: #008080;
+    background: #54a115;
     padding: 10px;
     display: flex;
     justify-content: space-between;
