@@ -1,9 +1,9 @@
 // JS file was required at bottom of HTML file so no need for DOMContentLoaded
 const BASE_URL = "http://localhost:3000"
-const GIFTS_URL = `${BASE_URL}/gifts`
+const DECKS_URL = `${BASE_URL}/decks`
 const USERS_URL = `${BASE_URL}/users`
 const FAVORITES_URL = `${BASE_URL}/favorites`
-const giftCollection = document.querySelector('#gift-collection')
+const deckCollection = document.querySelector('#deck-collection')
 const favCollection = document.querySelector('#fav-collection')
 const likeButton = document.querySelector('.like-btn')
 const signupForm = document.querySelector('#signup-form')
@@ -12,62 +12,62 @@ const header = document.querySelector('.header-banner')
 const logout = document.querySelector('.logout')
 let currentUser
 
-class Gift {
-    constructor(giftAttributes) {
-        this.title = giftAttributes.title;
-        this.price = giftAttributes.price;
-        this.category = giftAttributes.category;
-        this.description = giftAttributes.description;
-        this.link = giftAttributes.link;
-        this.image = giftAttributes.image;
-        this.id = giftAttributes.id;
+class Deck  {
+    constructor(deckAttributes) {
+        this.title = deckAttributes.title;
+        this.price = deckAttributes.price;
+        this.category = deckAttributes.category;
+        this.description = deckAttributes.description;
+        this.link = deckAttributes.link;
+        this.image = deckAttributes.image;
+        this.id = deckAttributes.id;
     }
 
     render() {
         return `<div class="card">
                   <h2>${this.title} ($${this.price})</h2>
-                  <h4 class="gift-cat">${this.category}</h4>
-                  <a href=${this.link} target="_blank"><img src=${this.image} class="gift-image" /></a>
+                  <h4 class="deck-cat">${this.category}</h4>
+                  <a href=${this.link} target="_blank"><img src=${this.image} class="deck-image" /></a>
                   <p>${this.description}<p>
-                  <button data-gift-id=${this.id} class="like-btn">♡</button>
+                  <button data-deck-id=${this.id} class="like-btn">♡</button>
                 </div>`
     }
 }
 
-function putGiftsOnDom(giftArray){
-    giftCollection.innerHTML = `<h2 class="subheader">All Gift Ideas</h2>
+function putDecksOnDom(deckArray){
+    deckCollection.innerHTML = `<h2 class="subheader">All Deck Ideas</h2>
                                 <h4 class="favorites-link">View My Favorites ♡</h4>`
-    giftArray.forEach(gift => {
-        giftCollection.innerHTML += new Gift(gift).render()
+    deckArray.forEach(deck => {
+        deckCollection.innerHTML += new Deck(deck).render()
 
         // `<div class="card">
-        //   <h2>${gift.title} ($${gift.price})</h2>
-        //   <h4 class="gift-cat">${gift.category}</h4>
-        //   <a href=${gift.link} target="_blank"><img src=${gift.image} class="gift-image" /></a>
-        //   <p>${gift.description}<p>
-        //   <button data-gift-id=${gift.id} class="like-btn">♡</button>
+        //   <h2>${deck.title} ($${deck.price})</h2>
+        //   <h4 class="deck-cat">${deck.category}</h4>
+        //   <a href=${deck.link} target="_blank"><img src=${deck.image} class="deck-image" /></a>
+        //   <p>${deck.description}<p>
+        //   <button data-deck-id=${deck.id} class="like-btn">♡</button>
         // </div>`
     })
 }
 
 function putFavoritesOnDom(favArray){
     favCollection.innerHTML = `<h2 class="subheader">My Favorites</h2>
-                               <h4 class="back-link">←Back to Gifts</h4>`
+                               <h4 class="back-link">←Back to Decks</h4>`
     favArray.forEach(favorite => {
         favCollection.innerHTML += `<div class="card">
-          <h2>${favorite.gift.title} ($${favorite.gift.price})</h2>
-          <h4 class="gift-cat">${favorite.gift.category}</h4>
-          <a href=${favorite.gift.link} target="_blank"><img src=${favorite.gift.image} class="gift-image" /></a>
-          <p>${favorite.gift.description}<p>
-          <button data-gift-id=${favorite.gift.id} class="like-btn" style="color:red;">♡</button>
+          <h2>${favorite.deck.title} ($${favorite.deck.price})</h2>
+          <h4 class="deck-cat">${favorite.deck.category}</h4>
+          <a href=${favorite.deck.link} target="_blank"><img src=${favorite.deck.image} class="deck-image" /></a>
+          <p>${favorite.deck.description}<p>
+          <button data-deck-id=${favorite.deck.id} class="like-btn" style="color:red;">♡</button>
         </div>`
     })
 }
 
-function fetchGifts(){
-    fetch(GIFTS_URL)
+function fetchDecks(){
+    fetch(DECKS_URL)
     .then(res => res.json())
-    .then(gifts => putGiftsOnDom(gifts))
+    .then(decks => putDecksOnDom(decks))
 }
 
 function fetchFavorites(){
@@ -103,9 +103,9 @@ signupForm.addEventListener('submit', function(e){
     )
 })
 
-giftCollection.addEventListener('click', function(e) {
+deckCollection.addEventListener('click', function(e) {
     if (event.target.className == "favorites-link") {
-        giftCollection.style.display = 'none';
+        deckCollection.style.display = 'none';
         fetchFavorites();
         favCollection.style.display = 'initial';
     }
@@ -114,7 +114,7 @@ giftCollection.addEventListener('click', function(e) {
 favCollection.addEventListener('click', function(e) {
     if (event.target.className == "back-link") {
         favCollection.style.display = 'none';
-        giftCollection.style.display = 'initial';
+        deckCollection.style.display = 'initial';
     }
 })
 
@@ -123,10 +123,10 @@ function loggedInUser(object){
     signupForm.style.display = 'none'
     welcome.innerHTML = `<h3>Hello, <i>${currentUser.email}</i> !</h3>`
     // logout.innerText = "Logout"
-    fetchGifts()
+    fetchDecks()
 }
 
-giftCollection.addEventListener('click', function(e){
+deckCollection.addEventListener('click', function(e){
     // console.log(event.target.className, event.target.style.color)
     // e.preventDefault() was preventing images from being clickable
     if ((event.target.className == "like-btn") && (event.target.style.color !== 'red')) {
@@ -139,7 +139,7 @@ giftCollection.addEventListener('click', function(e){
                 },
                 body: JSON.stringify({
                         user_id: `${currentUser.id}`,
-                        gift_id: `${event.target.dataset.giftId}`
+                        deck_id: `${event.target.dataset.deckId}`
                 })
         })
         .then( res => res.json())

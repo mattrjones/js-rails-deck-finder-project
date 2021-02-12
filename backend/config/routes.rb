@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
   resources :favorites
-  resources :gifts
+  resources :decks
   resources :users do
     resources :favorites
   end

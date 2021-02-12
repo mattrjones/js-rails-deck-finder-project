@@ -26,13 +26,13 @@ button {
   /* justify-self: right; */
 }
 
-.gift-image {
+.deck-image {
   justify-self: center;
   height: 12rem;
-  width: auto;
+  width: 12rem;
 }
 
-.gift-cat {
+.deck-cat {
     color:  #000000;
 }
 

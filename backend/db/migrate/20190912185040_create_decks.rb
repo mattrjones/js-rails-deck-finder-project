@@ -1,6 +1,6 @@
-class CreateGifts < ActiveRecord::Migration[5.2]
+class CreateDecks < ActiveRecord::Migration[5.2]
   def change
-    create_table :gifts do |t|
+    create_table :decks do |t|
       t.string :title
       t.integer :price
       t.string :description

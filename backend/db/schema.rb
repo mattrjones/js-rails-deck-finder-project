@@ -12,16 +12,7 @@
 
 ActiveRecord::Schema.define(version: 2019_09_12_185137) do
 
-  create_table "favorites", force: :cascade do |t|
-    t.integer "user_id"
-    t.integer "gift_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["gift_id"], name: "index_favorites_on_gift_id"
-    t.index ["user_id"], name: "index_favorites_on_user_id"
-  end
-
-  create_table "gifts", force: :cascade do |t|
+  create_table "decks", force: :cascade do |t|
     t.string "title"
     t.integer "price"
     t.string "description"
@@ -30,6 +21,15 @@ ActiveRecord::Schema.define(version: 2019_09_12_185137) do
     t.string "category"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "favorites", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "deck_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["deck_id"], name: "index_favorites_on_deck_id"
+    t.index ["user_id"], name: "index_favorites_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
