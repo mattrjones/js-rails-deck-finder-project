@@ -20,6 +20,15 @@ class FavoritesController < ApplicationController
         render json: favorites, include: [:deck]
     end
 
+    def show 
+        favorite = Favorite.find_by(id: params[:id])
+            if favorite
+            render json: favorite, except: [:created_at, :updated_at]
+        else
+            render json: {message: "favorite not found."}
+        end
+    end 
+
     def destroy
         fav_id = params[:id]
         favorite = Favorite.find(fav_id)

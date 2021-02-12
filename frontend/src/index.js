@@ -60,8 +60,20 @@ function putFavoritesOnDom(favArray){
           <a href=${favorite.deck.link} target="_blank"><img src=${favorite.deck.image} class="deck-image" /></a>
           <p>${favorite.deck.description}<p>
           <button data-deck-id=${favorite.deck.id} class="like-btn" style="color:red;">♡</button>
+          <button data-deck-id=${favorite.id} class="delete-fav-btn" onclick="deleteFav()">Delete Favorite</button>
         </div>`
     })
+}
+
+function deleteFav(){
+    debugger;
+    let favId = parseInt(event.target.dataset.deckId)
+
+    fetch(BASE_URL + '/users/' + currentUser.id + '/favorites/' + favId, {
+        method: 'DELETE'
+    })
+    
+    fetchFavorites();
 }
 
 function fetchDecks(){
