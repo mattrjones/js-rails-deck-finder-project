@@ -1,69 +1,46 @@
 class FavoritesController < ApplicationController
-  before_action :set_favorite, only: %i[ show edit update destroy ]
-
-  # GET /favorites or /favorites.json
-  def index
-    @favorites = Favorite.all
-  end
-
-  # GET /favorites/1 or /favorites/1.json
-  def show
-  end
-
-  # GET /favorites/new
   def new
-    @favorite = Favorite.new
+      favorite = Favorite.new
   end
 
-  # GET /favorites/1/edit
-  def edit
-  end
-
-  # POST /favorites or /favorites.json
   def create
-    @favorite = Favorite.new(favorite_params)
-
-    respond_to do |format|
-      if @favorite.save
-        format.html { redirect_to @favorite, notice: "Favorite was successfully created." }
-        format.json { render :show, status: :created, location: @favorite }
+      favorite = Favorite.new(favorite_params)
+      # current_user.favorite.build(favorite_params)
+      if favorite.save
+          render json: favorite, except: [:created_at, :updated_at]
       else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @favorite.errors, status: :unprocessable_entity }
+          render json: {message: "Favorite Failed"}
       end
-    end
   end
 
-  # PATCH/PUT /favorites/1 or /favorites/1.json
-  def update
-    respond_to do |format|
-      if @favorite.update(favorite_params)
-        format.html { redirect_to @favorite, notice: "Favorite was successfully updated." }
-        format.json { render :show, status: :ok, location: @favorite }
-      else
-        format.html { render :edit, status: :unprocessable_entity }
-        format.json { render json: @favorite.errors, status: :unprocessable_entity }
-      end
-    end
+  def index
+      user_id = params[:user_id]
+      user = User.find(user_id)
+      favorites = user.favorites
+      render json: favorites, include: [:gift]
+      # rendering related object data in JSON by nesting models
+      # result:
+        #       {
+        # "id": 2,
+        # "user_id": 1,
+        # "gift": {
+        #   "id": 4,
+        #   "title": "Airpods",
+        #   "category": "tech",
+        #   "created_at": "2019-05-14T11:20:37.177Z",
+        #   "updated_at": "2019-05-14T11:20:37.177Z"
+        # }
   end
 
-  # DELETE /favorites/1 or /favorites/1.json
   def destroy
-    @favorite.destroy
-    respond_to do |format|
-      format.html { redirect_to favorites_url, notice: "Favorite was successfully destroyed." }
-      format.json { head :no_content }
-    end
+      fav_id = params[:id]
+      favorite = Favorite.find(fav_id)
+      favorite.destroy
   end
 
-  private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_favorite
-      @favorite = Favorite.find(params[:id])
-    end
 
-    # Only allow a list of trusted parameters through.
-    def favorite_params
-      params.fetch(:favorite, {})
-    end
+private
+  def favorite_params
+    params.require(:favorite).permit(:user_id, :gift_id)
+  end
 end
