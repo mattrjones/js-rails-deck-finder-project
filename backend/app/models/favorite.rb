@@ -1,2 +1,5 @@
 class Favorite < ApplicationRecord
-end
+    belongs_to :user
+    belongs_to :gift
+  end
+  
