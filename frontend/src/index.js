@@ -21,32 +21,44 @@ class Deck  {
         this.link = deckAttributes.link;
         this.image = deckAttributes.image;
         this.id = deckAttributes.id;
-    }
+        this.element = document.createElement('div'); 
+        this.element.classList.add('card');
+        }
+    
 
     render() {
-        return `<div class="card">
-                  <h2>${this.title} ($${this.price})</h2>
-                  <h4 class="deck-cat">${this.category}</h4>
-                  <a href=${this.link} target="_blank"><img src=${this.image} class="deck-image" /></a>
-                  <p>${this.description}<p>
-                  <button data-deck-id=${this.id} class="like-btn">♡</button>
-                </div>`
+
+        this.element.innerHTML = `
+        <h2>${this.title} ($${this.price})</h2>
+        <h4 class="deck-cat">${this.category}</h4>
+        <a href=${this.link} target="_blank"><img src=${this.image} class="deck-image" /></a>
+        <p>${this.description}<p>
+        <button data-deck-id=${this.id} class="like-btn">♡</button>
+      `
+        return this.element 
     }
+    
+}
+
+class Favorite {
+    static all = [];
+
+    constructor(favoriteAttributes) {
+        this.user_id = favoriteAttributes.user_id;
+        this.deck_id = favoriteAttributes.deck_id;
+        this.id = favoriteAttributes.id;
+    }
+
+
+
 }
 
 function putDecksOnDom(deckArray){
     deckCollection.innerHTML = `<h2 class="subheader">All Deck Ideas</h2>
                                 <h4 class="favorites-link">View My Favorites ♡</h4>`
     deckArray.forEach(deck => {
-        deckCollection.innerHTML += new Deck(deck).render()
+        deckCollection.append(new Deck(deck).render())
 
-        // `<div class="card">
-        //   <h2>${deck.title} ($${deck.price})</h2>
-        //   <h4 class="deck-cat">${deck.category}</h4>
-        //   <a href=${deck.link} target="_blank"><img src=${deck.image} class="deck-image" /></a>
-        //   <p>${deck.description}<p>
-        //   <button data-deck-id=${deck.id} class="like-btn">♡</button>
-        // </div>`
     })
 }
 
@@ -54,19 +66,23 @@ function putFavoritesOnDom(favArray){
     favCollection.innerHTML = `<h2 class="subheader">My Favorites</h2>
                                <h4 class="back-link">←Back to Decks</h4>`
     favArray.forEach(favorite => {
-        favCollection.innerHTML += `<div class="card">
-          <h2>${favorite.deck.title} ($${favorite.deck.price})</h2>
-          <h4 class="deck-cat">${favorite.deck.category}</h4>
-          <a href=${favorite.deck.link} target="_blank"><img src=${favorite.deck.image} class="deck-image" /></a>
-          <p>${favorite.deck.description}<p>
-          <button data-deck-id=${favorite.deck.id} class="like-btn" style="color:red;">♡</button>
-          <button data-deck-id=${favorite.id} class="delete-fav-btn" onclick="deleteFav()">Delete Favorite</button>
-        </div>`
+        let deck = new Deck(favorite.deck)
+        deck.render().innerHTML+= `
+        <button data-deck-id=${favorite.id} class="delete-fav-btn" onclick="deleteFav()">Delete Favorite</button>
+        `
+        favCollection.append(deck.element)
+        // favCollection.innerHTML += `<div class="card">
+        //   <h2>${favorite.deck.title} ($${favorite.deck.price})</h2>
+        //   <h4 class="deck-cat">${favorite.deck.category}</h4>
+        //   <a href=${favorite.deck.link} target="_blank"><img src=${favorite.deck.image} class="deck-image" /></a>
+        //   <p>${favorite.deck.description}<p>
+        //   <button data-deck-id=${favorite.deck.id} class="like-btn" style="color:red;">♡</button>
+        //   <button data-deck-id=${favorite.id} class="delete-fav-btn" onclick="deleteFav()">Delete Favorite</button>
+        // </div>`
     })
 }
 
 function deleteFav(){
-    debugger;
     let favId = parseInt(event.target.dataset.deckId)
 
     fetch(BASE_URL + '/users/' + currentUser.id + '/favorites/' + favId, {
@@ -134,12 +150,10 @@ function loggedInUser(object){
     currentUser = object
     signupForm.style.display = 'none'
     welcome.innerHTML = `<h3>Hello, <i>${currentUser.email}</i> !</h3>`
-    // logout.innerText = "Logout"
     fetchDecks()
 }
 
 deckCollection.addEventListener('click', function(e){
-    // console.log(event.target.className, event.target.style.color)
     // e.preventDefault() was preventing images from being clickable
     if ((event.target.className == "like-btn") && (event.target.style.color !== 'red')) {
         let target = event.target
@@ -155,7 +169,11 @@ deckCollection.addEventListener('click', function(e){
                 })
         })
         .then( res => res.json())
-        .then( res => target.dataset.favId = res.id);
+        .then( res => {
+            target.dataset.favId = res.id,
+            Favorite.all.push(new Favorite(res))
+            
+            });
         event.target.style.color = 'red';}
     else if ((event.target.className == "like-btn") && (event.target.style.color == 'red')) {
         event.target.style.color = 'black';
